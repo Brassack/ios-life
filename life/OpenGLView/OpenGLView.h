@@ -10,6 +10,6 @@
 
 @interface OpenGLView : UIView
 
-@property (readonly) NSUInteger cellCount;
+@property (readonly) NSInteger cellCount;
 
 @end

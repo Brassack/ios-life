@@ -56,21 +56,50 @@ typedef struct{
 
 @property (nonatomic) GLLine* lines;
 
-//visulisation
+@property (readwrite) NSInteger cellCount;//to readwrite
+
+//visualisation
 @property (nonatomic, readonly) CAEAGLLayer* eaglLayer;
 
 @property (nonatomic) CADisplayLink* displayLink;
 
 @property (nonatomic) EAGLContext* context;
 
+@property NSTimer* generationTimer;
+
 @end
 
 @implementation OpenGLView
 
 @synthesize field=_field, lines=_lines;
-
+#pragma mark opengl support
 + (Class)layerClass {
     return [CAEAGLLayer class];
+}
+
+
+#pragma mark lifecycle
+- (void)dealloc{
+    [self.displayLink invalidate];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+    //    self.displayLink = nil;
+    //    GLuint tId = _gridTexture.textureID;
+    //    glDeleteTextures(1, &tId);
+    //    glDeleteBuffers(1, &_colorRenderBuffer);
+    //    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)appDidEnterBackground:(NSNotification*)note{
+    
+}
+
+- (void)appWillEnterForeground:(NSNotification*)note{
+    //    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+    //    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
+    
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder{
@@ -86,14 +115,20 @@ typedef struct{
         [self compileShaders];
         [self setupVBOs];
 //        self.lines;
-#warning test code
-        self.field;
+        [self setupFirstGeneration];
+
         [self setupDisplayLink];
+        
+
+//        self.generationTimer = [NSTimer scheduledTimerWithTimeInterval:1. target:self selector:@selector(nextGeneration) userInfo:nil repeats:YES];
     }
     
     return self;
 }
 
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [self nextGeneration];
+}
 #pragma mark setup
 - (void)setupLayer{
     self.eaglLayer.opaque = YES;
@@ -124,39 +159,12 @@ typedef struct{
     linesIndices[0] = 0;
     linesIndices[1] = 1;
     
-    
     glGenBuffers(1, &linesIndexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, linesIndexBuffer);
     
     glGenBuffers(1, &cellsIndexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cellsIndexBuffer);
     
-//    //    GLuint _vertexBuffer;
-//    glGenBuffers(1, &_vertexBuffer);
-//    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-//    //    glBufferData(GL_ARRAY_BUFFER, sizeof(_vertices), _vertices, GL_STATIC_DRAW);
-//    
-//    //    GLuint _indexBuffer;
-//    glGenBuffers(1, &_indexBuffer);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
-//    //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(_indices), _indices, GL_STATIC_DRAW);
-//    ///
-//    glGenBuffers(1, &_vertexBuffer2);
-//    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer2);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices2), Vertices2, GL_STATIC_DRAW);
-//    
-//    glGenBuffers(1, &_indexBuffer2);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer2);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices2), Indices2, GL_STATIC_DRAW);
-//    //
-//    
-//    glGenBuffers(1, &_vertexBuffer3);
-//    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer3);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices3), Vertices3, GL_STATIC_DRAW);
-//    
-//    glGenBuffers(1, &_indexBuffer3);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer3);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices3), Indices3, GL_STATIC_DRAW);
+    glGenBuffers(1, &cellsVertextBuffer);
+
 }
 
 - (void)compileShaders {
@@ -170,7 +178,6 @@ typedef struct{
     glLinkProgram(lineProgramHandle);
     
     
-    // 3
     GLint linkSuccess;
     glGetProgramiv(lineProgramHandle, GL_LINK_STATUS, &linkSuccess);
     if (linkSuccess == GL_FALSE) {
@@ -270,48 +277,6 @@ typedef struct{
     
     _field = calloc(FIELD_HEIGHT*FIELD_WIDTH, sizeof(GLuint));
     
-    
-#warning test code
-    _field[0] = 1;
-    _field[10] = 1;
-    _cellCount = 2;
-    
-    _cells = calloc(_cellCount, sizeof(GLVertex));
-    
-    GLfloat horisontalSpace = 2.0/(FIELD_WIDTH + 1);
-    GLfloat verticalSpace = 2.0/(FIELD_HEIGHT + 1);
-    
-    NSUInteger i = 10;
-    NSUInteger column = i - FIELD_WIDTH*(i/FIELD_WIDTH);
-    NSUInteger row = i/FIELD_WIDTH;
-    
-    GLfloat left = (column + 1)*horisontalSpace - 1.0;
-    GLfloat top = (row + 1)*verticalSpace - 1.0;
-
-    
-    _cells[0] = (GLVertex){{left,top,0.0},{.0, 1.0, .0, 1.0}};
-    
-    
-    i = 3;
-    
-    column = i - FIELD_WIDTH*(i/FIELD_WIDTH);
-    
-    row = i/FIELD_WIDTH;
-    left = (column + 1)*horisontalSpace - 1.0;
-    top = (row + 1)*verticalSpace - 1.0;
-    
-    _cells[1] = (GLVertex){{left,top,0.0},{.0, 1.0, .0, 1.0}};
-    
-    
-    glGenBuffers(1, &cellsVertextBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, cellsVertextBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(_cells), _cells, GL_STATIC_DRAW);
-    
-    cellsIndices = malloc(sizeof(GLuint)*_cellCount);
-    for(GLuint i = 0; i<_cellCount; ++i){
-        cellsIndices[i] = i;
-    }
-    
     return _field;
 }
 
@@ -354,12 +319,12 @@ typedef struct{
         
         _lines[i].vertices[0].color[0] = 1.0;
         _lines[i].vertices[0].color[1] = 1.0;
-        _lines[i].vertices[0].color[2] = 1.0;
+        _lines[i].vertices[0].color[2] = 0.0;
         _lines[i].vertices[0].color[3] = 1.0;
         
         _lines[i].vertices[1].color[0] = 1.0;
         _lines[i].vertices[1].color[1] = 1.0;
-        _lines[i].vertices[1].color[2] = 1.0;
+        _lines[i].vertices[1].color[2] = 0.0;
         _lines[i].vertices[1].color[3] = 1.0;
 
         
@@ -371,16 +336,16 @@ typedef struct{
     return _lines;
 }
 
+
 #pragma mark render
 - (void)render:(CADisplayLink*)sender{
 //    NSLog(@"timestamp - %f", sender.timestamp);
-    glClearColor(.0, .0, .0, .0);
+    glClearColor(139./255., .0, 1, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     
     glViewport(0, 0, self.frame.size.width, self.frame.size.height);
 
-    
-    
+
     glUseProgram(lineProgramHandle);
     
 
@@ -407,25 +372,164 @@ typedef struct{
     
     glBindBuffer(GL_ARRAY_BUFFER, cellsVertextBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cellsIndexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, _cellCount*sizeof(*self.cells), self.cells, GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cellsIndices), cellsIndices, GL_STATIC_DRAW);
     
     
     glVertexAttribPointer(cellPositionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(GLVertex), 0);
     glVertexAttribPointer(cellColorSlot, 4, GL_FLOAT, GL_FALSE, sizeof(GLVertex), (GLvoid*)(sizeof(float) * 3));
-    glUniform1f(cellSizeSlot, 5.0);
+    glUniform1f(cellSizeSlot, 6.5);
     glEnableVertexAttribArray(cellPositionSlot);
     glEnableVertexAttribArray(cellColorSlot);
     
-    glDrawElements(GL_POINTS, (GLsizei)_cellCount, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_POINTS, (GLsizei)self.cellCount, GL_UNSIGNED_INT, 0);
 
     [self.context presentRenderbuffer:GL_RENDERBUFFER];
+}
+
+#pragma mark life
+- (void)setupFirstGeneration{
+#warning test code
+    self.field;
+    
+//    _field[7] = 1;
+//    _field[8] = 1;
+//    _field[2] = 1;
+//    _field[3] = 1;
+//    _field[4] = 1;
+//    _field[5] = 1;
+//    _field[6] = 1;
+//    _field[17] = 1;
+//    _field[18] = 1;
+//    _field[12] = 1;
+//    _field[13] = 1;
+//    _field[14] = 1;
+//    _field[15] = 1;
+//    _field[16] = 1;
+    _field[12] = 1;
+    _field[13] = 1;
+    _field[14] = 1;
+    _field[15] = 1;
+    
+    self.cellCount = 4;
+    [self setupBufferDataForGeneration];
+}
+
+- (void)nextGeneration{
+    NSUInteger cellAroundCounters[FIELD_HEIGHT*FIELD_WIDTH];
+    for(NSUInteger i = 0; i<FIELD_HEIGHT*FIELD_WIDTH;++i){
+        NSUInteger column = i - FIELD_WIDTH*(i/FIELD_WIDTH);
+        NSUInteger row = i/FIELD_WIDTH;
+        NSUInteger cellAroundCounter = 0;
+        
+        //bottom
+        if(row>0){
+            if(self.field[i - FIELD_WIDTH]){
+                ++cellAroundCounter;
+            }
+            if(column>0){
+                if(self.field[i - FIELD_WIDTH - 1]){
+                    ++cellAroundCounter;
+                }
+            }
+            if(column<FIELD_WIDTH - 1){
+                if(self.field[i - FIELD_WIDTH + 1]){
+                    ++cellAroundCounter;
+                }
+            }
+        }
+        //top
+        if(row<FIELD_HEIGHT - 1){
+            if(self.field[i + FIELD_WIDTH]){
+                ++cellAroundCounter;
+            }
+            if(column>0){
+                if(self.field[i + FIELD_WIDTH - 1]){
+                    ++cellAroundCounter;
+                }
+            }
+            if(column<FIELD_WIDTH - 1){
+                if(self.field[i + FIELD_WIDTH + 1]){
+                    ++cellAroundCounter;
+                }
+            }
+        }
+        //left
+        if(column>0){
+            if(self.field[i - 1]){
+                ++cellAroundCounter;
+            }
+        }
+        //right
+        if(column<FIELD_WIDTH - 1){
+            if(self.field[i + 1]){
+                ++cellAroundCounter;
+            }
+        }
+
+        cellAroundCounters[i] = cellAroundCounter;
+    }
+    
+    for(NSUInteger i = 0; i<FIELD_HEIGHT*FIELD_WIDTH;++i){
+        NSUInteger cellAroundCounter = cellAroundCounters[i];
+        
+        if(self.field[i]){
+            if(cellAroundCounter<2 || cellAroundCounter>3){//dead
+                self.field[i] = 0;
+                --self.cellCount;
+            }
+        }else{
+            if(cellAroundCounter == 3){//born
+                self.field[i] = 1;
+                ++self.cellCount;
+            }
+        }
+    }
+    
+    
+    if(self.cells){
+        free(self.cells);
+        self.cells = NULL;
+    }
+    
+    if(self.cellCount){
+        [self setupBufferDataForGeneration];
+    }
+}
+
+- (void)setupBufferDataForGeneration{
+    self.cells = calloc(self.cellCount, sizeof(GLVertex));
+    GLfloat horisontalSpace = 2.0/(FIELD_WIDTH + 1);
+    GLfloat verticalSpace = 2.0/(FIELD_HEIGHT + 1);
+    
+    NSUInteger cellIndex = 0;
+    for(NSUInteger i = 0; i<FIELD_HEIGHT*FIELD_WIDTH;++i){
+        if(!self.field[i]){
+            continue;
+        }
+        
+        NSUInteger column = i - FIELD_WIDTH*(i/FIELD_WIDTH);
+        NSUInteger row = i/FIELD_WIDTH;
+        
+        GLfloat left = (column + 1)*horisontalSpace - 1.0;
+        GLfloat top = (row + 1)*verticalSpace - 1.0;
+        
+        self.cells[cellIndex++] = (GLVertex){{left, top, 0.0},{255./255., 255./255., 0./255., 1.0}};
+    }
+    
+    
+    glBindBuffer(GL_ARRAY_BUFFER, cellsVertextBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLVertex)*self.cellCount, self.cells, GL_STATIC_DRAW);
+    
+    cellsIndices = malloc(sizeof(GLuint)*self.cellCount);
+    for(GLuint i = 0; i<self.cellCount; ++i){
+        cellsIndices[i] = i;
+    }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cellsIndexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(*cellsIndices)*self.cellCount, cellsIndices, GL_STATIC_DRAW);
 }
 
 #pragma mark helper
 - (GLuint)compileShader:(NSString*)shaderName withType:(GLenum)shaderType {
     
-    // 1
     NSString* shaderPath = [[NSBundle mainBundle] pathForResource:shaderName
                                                            ofType:@"glsl"];
     NSError* error;
@@ -436,18 +540,14 @@ typedef struct{
         exit(1);
     }
     
-    // 2
     GLuint shaderHandle = glCreateShader(shaderType);
     
-    // 3
     const char * shaderStringUTF8 = [shaderString UTF8String];
     int shaderStringLength = (int)[shaderString length];
     glShaderSource(shaderHandle, 1, &shaderStringUTF8, &shaderStringLength);
     
-    // 4
     glCompileShader(shaderHandle);
     
-    // 5
     GLint compileSuccess;
     glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &compileSuccess);
     if (compileSuccess == GL_FALSE) {
@@ -461,27 +561,6 @@ typedef struct{
     return shaderHandle;
 }
 
-#pragma mark lifecycle
-- (void)dealloc{
-    [self.displayLink invalidate];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
-//    self.displayLink = nil;
-    //    GLuint tId = _gridTexture.textureID;
-    //    glDeleteTextures(1, &tId);
-    //    glDeleteBuffers(1, &_colorRenderBuffer);
-    //    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)appDidEnterBackground:(NSNotification*)note{
-    
-}
-
-- (void)appWillEnterForeground:(NSNotification*)note{
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
-    
-}
 
 /*
 // Only override drawRect: if you perform custom drawing.
