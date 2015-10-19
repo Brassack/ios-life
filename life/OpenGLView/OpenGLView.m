@@ -366,13 +366,13 @@ typedef struct{
     //color
     for(NSUInteger i = 0; i<FIELD_HEIGHT+FIELD_WIDTH; ++i){
         
-        _lines[i].vertices[0].color[0] = 1.0;
-        _lines[i].vertices[0].color[1] = 1.0;
-        _lines[i].vertices[0].color[2] = 0.0;
+        _lines[i].vertices[0].color[0] = .5;
+        _lines[i].vertices[0].color[1] = .5;
+        _lines[i].vertices[0].color[2] = .0;
         _lines[i].vertices[0].color[3] = 1.0;
         
-        _lines[i].vertices[1].color[0] = 1.0;
-        _lines[i].vertices[1].color[1] = 1.0;
+        _lines[i].vertices[1].color[0] = .5;
+        _lines[i].vertices[1].color[1] = .5;
         _lines[i].vertices[1].color[2] = 0.0;
         _lines[i].vertices[1].color[3] = 1.0;
 
@@ -389,7 +389,7 @@ typedef struct{
 #pragma mark render
 - (void)render:(CADisplayLink*)sender{
 //    NSLog(@"timestamp - %f", sender.timestamp);
-    glClearColor(139./255., .0, 1, 1.0);
+    glClearColor(50./255., 30.0/255., 80./255., 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     
     glViewport(0, 0, self.frame.size.width, self.frame.size.height);
@@ -573,7 +573,7 @@ typedef struct{
         GLfloat left = (column + 1)*horisontalSpace - 1.0;
         GLfloat top = (row + 1)*verticalSpace - 1.0;
         
-        self.cells[cellIndex++] = (GLVertex){{left, top, 0.0},{255./255., 255./255., 0./255., 1.0}};
+        self.cells[cellIndex++] = (GLVertex){{left, top, 0.0},{200./255., 200./255., 255./255., 1.0}};
     }
     
     
