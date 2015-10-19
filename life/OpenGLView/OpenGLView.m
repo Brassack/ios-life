@@ -83,25 +83,34 @@ typedef struct{
 #pragma mark lifecycle
 - (void)dealloc{
     [self.displayLink invalidate];
+    self.displayLink = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
-    //    self.displayLink = nil;
-    //    GLuint tId = _gridTexture.textureID;
-    //    glDeleteTextures(1, &tId);
-    //    glDeleteBuffers(1, &_colorRenderBuffer);
-    //    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    if(_field){
+        free(_field);
+    }
+    
+    if(_lines){
+        free(_lines);
+    }
+    
+    if(_cells){
+        free(_cells);
+    }
 }
 
 - (void)appDidEnterBackground:(NSNotification*)note{
-    
+    [_displayLink invalidate];
+    _displayLink = nil;
+    [self.generationTimer invalidate];
+//    self.generationTimer = nil;
 }
 
 - (void)appWillEnterForeground:(NSNotification*)note{
-    //    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-    //    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
-    
+    [self setupDisplayLink];
+    if(self.generationTimer){
+        self.generationTimer = [NSTimer scheduledTimerWithTimeInterval:1. target:self selector:@selector(nextGeneration) userInfo:nil repeats:YES];
+    }
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder{
