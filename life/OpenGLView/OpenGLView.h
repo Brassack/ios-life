@@ -14,5 +14,8 @@
 
 - (void)nextGeneration;
 - (void)clearField;
+/*!
+ @return if timer stops return NO, if run return YES
+ */
 - (BOOL)runTimer;
 @end

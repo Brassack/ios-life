@@ -50,7 +50,7 @@ typedef struct{
 
 }
 //data
-@property (nonatomic ,readonly) GLuint *field;
+@property (nonatomic ,readonly) GLuint *field;//not bool because maybe additional state of cell in future
 
 @property GLVertex* cells;
 
@@ -366,13 +366,13 @@ typedef struct{
     //color
     for(NSUInteger i = 0; i<FIELD_HEIGHT+FIELD_WIDTH; ++i){
         
-        _lines[i].vertices[0].color[0] = .5;
-        _lines[i].vertices[0].color[1] = .5;
+        _lines[i].vertices[0].color[0] = .3;
+        _lines[i].vertices[0].color[1] = .3;
         _lines[i].vertices[0].color[2] = .0;
         _lines[i].vertices[0].color[3] = 1.0;
         
-        _lines[i].vertices[1].color[0] = .5;
-        _lines[i].vertices[1].color[1] = .5;
+        _lines[i].vertices[1].color[0] = .3;
+        _lines[i].vertices[1].color[1] = .3;
         _lines[i].vertices[1].color[2] = 0.0;
         _lines[i].vertices[1].color[3] = 1.0;
 
@@ -456,9 +456,7 @@ typedef struct{
     [self setupBufferDataForGeneration];
 }
 
-/**
- @return if timer stops return NO, if run return YES
- */
+
 - (BOOL)runTimer{
     if(self.generationTimer){
         [self.generationTimer invalidate];
