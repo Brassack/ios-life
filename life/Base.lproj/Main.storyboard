@@ -25,16 +25,59 @@
                                     <constraint firstAttribute="width" secondItem="pYi-yT-293" secondAttribute="height" id="M6D-7x-7KE"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QXL-RJ-Pce">
+                                <rect key="frame" x="20" y="425" width="34" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Start"/>
+                                <connections>
+                                    <action selector="start:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5AA-b7-WRa"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FZ1-Th-HVP">
+                                <rect key="frame" x="323" y="425" width="32" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <action selector="next" destination="BYZ-38-t0r" eventType="touchUpInside" id="kp9-8t-KHm"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A1E-mq-BHy">
+                                <rect key="frame" x="169" y="425" width="36" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Clear"/>
+                                <connections>
+                                    <action selector="clear" destination="BYZ-38-t0r" eventType="touchUpInside" id="bmc-3P-Ikt"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VAs-cm-wVm">
+                                <rect key="frame" x="166" y="617" width="42" height="30"/>
+                                <animations/>
+                                <state key="normal" title="About"/>
+                                <connections>
+                                    <action selector="about" destination="BYZ-38-t0r" eventType="touchUpInside" id="ihE-rO-E47"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="A1E-mq-BHy" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Kqe-hp-6zn"/>
+                            <constraint firstItem="QXL-RJ-Pce" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="SOz-5S-Yba"/>
+                            <constraint firstAttribute="trailing" secondItem="FZ1-Th-HVP" secondAttribute="trailing" constant="20" id="dG5-ZJ-KH3"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="VAs-cm-wVm" secondAttribute="bottom" constant="20" id="fOh-lM-2sn"/>
                             <constraint firstAttribute="trailing" secondItem="pYi-yT-293" secondAttribute="trailing" constant="20" id="fTz-da-h29"/>
                             <constraint firstItem="pYi-yT-293" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="50" id="fyV-w9-i3J"/>
+                            <constraint firstItem="A1E-mq-BHy" firstAttribute="top" secondItem="pYi-yT-293" secondAttribute="bottom" constant="20" id="kaQ-1P-ML0"/>
+                            <constraint firstItem="FZ1-Th-HVP" firstAttribute="top" secondItem="pYi-yT-293" secondAttribute="bottom" constant="20" id="lok-FI-fnh"/>
                             <constraint firstItem="pYi-yT-293" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="tpY-6A-CZy"/>
+                            <constraint firstItem="VAs-cm-wVm" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="u5E-3v-jlr"/>
+                            <constraint firstItem="QXL-RJ-Pce" firstAttribute="top" secondItem="pYi-yT-293" secondAttribute="bottom" constant="20" id="xJC-V9-plQ"/>
                         </constraints>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                    <connections>
+                        <outlet property="lifeView" destination="pYi-yT-293" id="pOc-Td-PSD"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

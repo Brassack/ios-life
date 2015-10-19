@@ -67,6 +67,8 @@ typedef struct{
 
 @property NSTimer* generationTimer;
 
+//touch
+@property NSUInteger currentCellIndex;
 @end
 
 @implementation OpenGLView
@@ -126,8 +128,55 @@ typedef struct{
     return self;
 }
 
+#pragma mark touches
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    UITouch* touch = [touches anyObject];
+    if(!touch){
+        self.currentCellIndex = NSUIntegerMax;
+    }
+    
+    NSUInteger index = [self indexWithTouchPoint:[touch locationInView:self]];
+    
+    [self commonTouchHandlerWithIndex:index];
+}
+
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    UITouch* touch = [touches anyObject];
+    if(!touch){
+        self.currentCellIndex = NSUIntegerMax;
+    }
+    
+    NSUInteger index = [self indexWithTouchPoint:[touch locationInView:self]];
+    
+    [self commonTouchHandlerWithIndex:index];
+}
+
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-    [self nextGeneration];
+    self.currentCellIndex = NSUIntegerMax;
+}
+
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    self.currentCellIndex = NSUIntegerMax;
+}
+
+- (void)commonTouchHandlerWithIndex:(NSUInteger)index{
+    if(index != self.currentCellIndex){
+        self.currentCellIndex = index;
+        if(index == NSUIntegerMax){
+            return;
+        }
+        
+        if(self.field[index]){
+            self.field[index] = 0;
+            --self.cellCount;
+        }else{
+            self.field[index] = 1;
+            ++self.cellCount;
+        }
+        
+        [self setupBufferDataForGeneration];
+    }
 }
 #pragma mark setup
 - (void)setupLayer{
@@ -387,30 +436,39 @@ typedef struct{
 
 #pragma mark life
 - (void)setupFirstGeneration{
-#warning test code
-    self.field;
+    self.currentCellIndex = NSUIntegerMax;
+    NSArray* cells = @[@70, @71, @72, @82, @91];//glider
+    [cells enumerateObjectsUsingBlock:^(NSNumber*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        self.field[[obj integerValue]] = 1;
+    }];
     
-//    _field[7] = 1;
-//    _field[8] = 1;
-//    _field[2] = 1;
-//    _field[3] = 1;
-//    _field[4] = 1;
-//    _field[5] = 1;
-//    _field[6] = 1;
-//    _field[17] = 1;
-//    _field[18] = 1;
-//    _field[12] = 1;
-//    _field[13] = 1;
-//    _field[14] = 1;
-//    _field[15] = 1;
-//    _field[16] = 1;
-    _field[12] = 1;
-    _field[13] = 1;
-    _field[14] = 1;
-    _field[15] = 1;
-    
-    self.cellCount = 4;
+    self.cellCount = [cells count];
     [self setupBufferDataForGeneration];
+}
+
+- (void)clearField{
+    if(_field){
+        free(_field);
+        _field = NULL;
+    }
+    
+    self.cellCount = 0;
+    [self setupBufferDataForGeneration];
+}
+
+/**
+ @return if timer stops return NO, if run return YES
+ */
+- (BOOL)runTimer{
+    if(self.generationTimer){
+        [self.generationTimer invalidate];
+        self.generationTimer = nil;
+        return NO;
+    }else{
+        
+        self.generationTimer = [NSTimer scheduledTimerWithTimeInterval:1. target:self selector:@selector(nextGeneration) userInfo:nil repeats:YES];
+        return YES;
+    }
 }
 
 - (void)nextGeneration{
@@ -484,18 +542,21 @@ typedef struct{
         }
     }
     
+
+    [self setupBufferDataForGeneration];
+}
+
+- (void)setupBufferDataForGeneration{
     
     if(self.cells){
         free(self.cells);
         self.cells = NULL;
     }
     
-    if(self.cellCount){
-        [self setupBufferDataForGeneration];
+    if(!self.cellCount){
+        return;
     }
-}
-
-- (void)setupBufferDataForGeneration{
+    
     self.cells = calloc(self.cellCount, sizeof(GLVertex));
     GLfloat horisontalSpace = 2.0/(FIELD_WIDTH + 1);
     GLfloat verticalSpace = 2.0/(FIELD_HEIGHT + 1);
@@ -519,6 +580,10 @@ typedef struct{
     glBindBuffer(GL_ARRAY_BUFFER, cellsVertextBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLVertex)*self.cellCount, self.cells, GL_STATIC_DRAW);
     
+    if(cellsIndices){
+        free(cellsIndices);
+        cellsIndices = NULL;
+    }
     cellsIndices = malloc(sizeof(GLuint)*self.cellCount);
     for(GLuint i = 0; i<self.cellCount; ++i){
         cellsIndices[i] = i;
@@ -561,6 +626,16 @@ typedef struct{
     return shaderHandle;
 }
 
+- (NSUInteger)indexWithTouchPoint:(CGPoint)point{
+    NSInteger row = FIELD_HEIGHT - (NSInteger)point.y/(self.frame.size.height/FIELD_HEIGHT);
+    NSInteger column = (NSInteger)point.x/(self.frame.size.width/FIELD_WIDTH);
+    
+    if(row<0 || column<0){
+        return NSUIntegerMax;
+    }
+    
+    return column+(row*FIELD_WIDTH);
+}
 
 /*
 // Only override drawRect: if you perform custom drawing.

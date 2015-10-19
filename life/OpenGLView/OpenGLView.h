@@ -12,4 +12,7 @@
 
 @property (readonly) NSInteger cellCount;
 
+- (void)nextGeneration;
+- (void)clearField;
+- (BOOL)runTimer;
 @end
