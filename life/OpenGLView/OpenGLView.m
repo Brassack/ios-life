@@ -117,24 +117,24 @@ typedef struct{
     if(self = [super initWithCoder:aDecoder]){
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
-        
-        [self setupLayer];
-//        self.context;
-//        [self setupDepthBuffer];
-        [self setupRenderBuffer];
-        [self setupFrameBuffer];
-        [self compileShaders];
-        [self setupVBOs];
-//        self.lines;
-        [self setupFirstGeneration];
 
-        [self setupDisplayLink];
-        
-
-//        self.generationTimer = [NSTimer scheduledTimerWithTimeInterval:1. target:self selector:@selector(nextGeneration) userInfo:nil repeats:YES];
     }
     
     return self;
+}
+
+- (void) incipience{
+    [self setupLayer];
+    //        self.context;
+    //        [self setupDepthBuffer];
+    [self setupRenderBuffer];
+    [self setupFrameBuffer];
+    [self compileShaders];
+    [self setupVBOs];
+    //        self.lines;
+    [self setupFirstGeneration];
+    
+    [self setupDisplayLink];
 }
 
 #pragma mark touches

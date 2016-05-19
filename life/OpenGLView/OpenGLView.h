@@ -12,6 +12,9 @@
 
 @property (readonly) NSInteger cellCount;
 
+- (void) incipience;
+
+
 - (void)nextGeneration;
 - (void)clearField;
 /*!

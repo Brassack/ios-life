@@ -7,17 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A6223FAF1BD26E5B00D0BB0D /* LineFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A6223FAB1BD26E5B00D0BB0D /* LineFragment.glsl */; settings = {ASSET_TAGS = (); }; };
-		A6223FB01BD26E5B00D0BB0D /* LineVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A6223FAC1BD26E5B00D0BB0D /* LineVertex.glsl */; settings = {ASSET_TAGS = (); }; };
-		A6223FB11BD26E5B00D0BB0D /* CellFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A6223FAD1BD26E5B00D0BB0D /* CellFragment.glsl */; settings = {ASSET_TAGS = (); }; };
-		A6223FB21BD26E5B00D0BB0D /* CellVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A6223FAE1BD26E5B00D0BB0D /* CellVertex.glsl */; settings = {ASSET_TAGS = (); }; };
+		A6223FAF1BD26E5B00D0BB0D /* LineFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A6223FAB1BD26E5B00D0BB0D /* LineFragment.glsl */; };
+		A6223FB01BD26E5B00D0BB0D /* LineVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A6223FAC1BD26E5B00D0BB0D /* LineVertex.glsl */; };
+		A6223FB11BD26E5B00D0BB0D /* CellFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A6223FAD1BD26E5B00D0BB0D /* CellFragment.glsl */; };
+		A6223FB21BD26E5B00D0BB0D /* CellVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A6223FAE1BD26E5B00D0BB0D /* CellVertex.glsl */; };
 		A62387281BCFE3B000BA67DB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A62387271BCFE3B000BA67DB /* main.m */; };
 		A623872B1BCFE3B000BA67DB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A623872A1BCFE3B000BA67DB /* AppDelegate.m */; };
 		A623872E1BCFE3B000BA67DB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A623872D1BCFE3B000BA67DB /* ViewController.m */; };
 		A62387311BCFE3B000BA67DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A623872F1BCFE3B000BA67DB /* Main.storyboard */; };
 		A62387331BCFE3B000BA67DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A62387321BCFE3B000BA67DB /* Assets.xcassets */; };
 		A62387361BCFE3B000BA67DB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A62387341BCFE3B000BA67DB /* LaunchScreen.storyboard */; };
-		A623873F1BCFE6BA00BA67DB /* OpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = A623873E1BCFE6BA00BA67DB /* OpenGLView.m */; settings = {ASSET_TAGS = (); }; };
+		A623873F1BCFE6BA00BA67DB /* OpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = A623873E1BCFE6BA00BA67DB /* OpenGLView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -300,10 +300,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = life/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = dplatov.life;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dmytroplatov.ios-life";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -311,10 +315,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = life/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = dplatov.life;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dmytroplatov.ios-life";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
